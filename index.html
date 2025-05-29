@@ -2,296 +2,188 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FanCod LIVE Channels</title>
+  <title>FanCod Live - Proxy Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0e0e0e;
-      color: #fff;
+      background-color: #0f0f0f;
+      color: white;
       margin: 0;
       padding: 20px;
-      width: 100%;
-      overflow-x: hidden;
     }
 
     h1 {
       text-align: center;
+      font-size: 2rem;
       color: #00ff8c;
       margin-bottom: 30px;
-      font-size: 2em;
     }
 
     .channel-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      padding: 0 10px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
     }
 
     .channel-card {
-      background: #161616;
+      background: #1a1a1a;
+      padding: 12px;
       border-radius: 12px;
-      padding: 10px;
-      position: relative;
-      transition: 0.3s ease;
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(0, 255, 140, 0.1);
       text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 150, 0.15);
     }
 
     .channel-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 0 18px #00ffc3;
+      box-shadow: 0 0 16px #00ffc3;
     }
 
     .channel-logo {
       width: 100%;
-      height: 120px;
-      border-radius: 10px;
+      height: 140px;
       object-fit: cover;
-      background: #000;
-      box-shadow: 0 0 6px rgba(0,255,140,0.4);
+      border-radius: 10px;
       margin-bottom: 10px;
     }
 
     .channel-title {
-      font-size: 1rem;
       font-weight: bold;
-      color: #ffffff;
+      font-size: 1rem;
     }
 
     .live-badge {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      background-color: #ff0033;
+      top: 10px;
+      left: 10px;
+      background: #ff0033;
+      color: #fff;
       padding: 4px 10px;
-      border-radius: 8px;
       font-size: 0.75rem;
       font-weight: bold;
-      animation: blink 1s infinite, glow 2s infinite;
-      box-shadow: 0 0 12px #ff0033;
+      border-radius: 8px;
+      animation: blink 1.2s infinite, glow 2s infinite;
+      box-shadow: 0 0 10px #ff0033;
     }
 
     @keyframes blink {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      50% { opacity: 0.5; }
     }
 
     @keyframes glow {
-      0%, 100% { box-shadow: 0 0 8px #ff0033; }
-      50% { box-shadow: 0 0 24px #ff0033; }
-    }
-
-    #player {
-      margin-top: 40px;
-      display: none;
+      0%, 100% { box-shadow: 0 0 10px #ff0033; }
+      50% { box-shadow: 0 0 25px #ff0033; }
     }
 
     #player-container {
-      position: relative;
+      margin-top: 40px;
+      display: none;
       max-width: 960px;
-      margin: 0 auto;
-      padding: 10px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     video {
       width: 100%;
       height: auto;
-      max-height: 70vh;
-      margin: 0 auto;
-      display: block;
-      background: #000;
+      max-height: 500px;
       border-radius: 16px;
+      background: #000;
     }
 
     #loading {
-      display: none;
-      text-align: center;
       color: #00ff8c;
-      font-size: 1.2rem;
+      text-align: center;
       margin-bottom: 10px;
     }
 
-    #loading::before {
-      content: "";
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #00ff8c;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-      margin-right: 10px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    #player-controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 10px;
-    }
-
-    #player-controls button {
-      background: #ff0033;
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
     @media (max-width: 600px) {
-      .channel-card {
-        padding: 8px;
-      }
-      .channel-logo {
-        height: 100px;
-      }
-      .channel-title {
-        font-size: 0.9rem;
-      }
-      video {
-        max-height: 50vh;
-      }
+      .channel-logo { height: 100px; }
+      video { max-height: 300px; }
     }
   </style>
 </head>
 <body>
-  <h1>🔴 FanCod LIVE Channels</h1>
+  <h1>🔴 FanCod LIVE Channels (PHP Proxy)</h1>
   <div class="channel-list" id="channelList"></div>
 
-  <div id="player">
-    <div id="player-container">
-      <div id="player-controls">
-        <button id="closePlayer">Close</button>
-        <button id="fullscreenPlayer">Full Screen</button>
-      </div>
-      <div id="loading">Loading...</div>
-      <video id="videoPlayer" controls autoplay>
-        <source src="" type="application/x-mpegURL">
-        Your browser does not support M3U8 playback.
-      </video>
-    </div>
+  <div id="player-container">
+    <div id="loading">Loading stream...</div>
+    <video id="videoPlayer" controls autoplay></video>
   </div>
 
   <script>
     async function loadChannels() {
       try {
-        const res = await fetch('channels.json');
-        if (!res.ok) throw new Error(`Failed to load channels.json: ${res.status}`);
-        const channels = await res.json();
-        const container = document.getElementById('channelList');
+        const res = await fetch("channels.json");
+        const data = await res.json();
+        const container = document.getElementById("channelList");
 
-        channels.forEach(channel => {
-          const card = document.createElement('div');
-          card.className = 'channel-card';
+        data.forEach(channel => {
+          const card = document.createElement("div");
+          card.className = "channel-card";
 
-          const logo = channel.attributes?.['tvg-logo'] || '';
-          const name = channel.name || 'Unknown Match';
-          const url = channel.url;
+          const logo = channel.attributes?.["tvg-logo"] || "";
+          const name = channel.name || "Untitled";
+          const rawUrl = channel.url;
 
           card.innerHTML = `
             <div class="live-badge">LIVE</div>
-            <img src="${logo}" alt="${name}" class="channel-logo" onerror="this.src='https://via.placeholder.com/320x160/000000/ffffff?text=No+Image';">
+            <img src="${logo}" alt="${name}" class="channel-logo"
+              onerror="this.src='https://via.placeholder.com/300x140?text=No+Logo'">
             <div class="channel-title">${name}</div>
           `;
 
-          card.onclick = () => {
-            const player = document.getElementById("player");
-            const video = document.getElementById("videoPlayer");
-            const loading = document.getElementById("loading");
-
-            loading.style.display = "block";
-            player.style.display = "block";
-
-            // Use the Vercel proxy URL
-            const proxyBaseUrl = 'https://proxy-gamma-rosy.vercel.app/'; // Replace with your Vercel proxy URL
-            let proxyUrl;
-            if (url.includes('dai.fancode.com')) {
-              const streamPath = url.replace('https://dai.fancode.com/', '');
-              proxyUrl = `${proxyBaseUrl}/stream/fancode/${streamPath}`;
-            } else if (url.includes('sonypartnersdaimenew.akamaized.net')) {
-              const streamPath = url.split('/hls')[1];
-              proxyUrl = `${proxyBaseUrl}/stream/sony/hls${streamPath}`;
-            } else {
-              alert("Unsupported stream URL.");
-              loading.style.display = "none";
-              return;
-            }
-
-            if (Hls.isSupported()) {
-              const hls = new Hls();
-              hls.loadSource(proxyUrl);
-              hls.attachMedia(video);
-              hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play().catch(err => {
-                  loading.style.display = "none";
-                  alert("Playback failed: " + err.message);
-                });
-                loading.style.display = "none";
-              });
-              hls.on(Hls.Events.ERROR, (event, data) => {
-                loading.style.display = "none";
-                let errorMessage = "Error loading stream: " + data.type;
-                if (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR) {
-                  errorMessage = "Unable to load stream: Check the proxy URL or stream availability.";
-                } else if (data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR) {
-                  errorMessage = "Invalid stream format (M3U8 parsing error).";
-                }
-                alert(errorMessage);
-                console.error("HLS Error:", data);
-              });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              video.src = proxyUrl;
-              video.play().then(() => {
-                loading.style.display = "none";
-              }).catch(err => {
-                loading.style.display = "none";
-                alert("Playback failed: " + err.message);
-              });
-            } else {
-              loading.style.display = "none";
-              alert("Your browser does not support HLS playback.");
-            }
-
-            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-          };
-
+          card.onclick = () => playStream(rawUrl);
           container.appendChild(card);
         });
-      } catch (error) {
-        alert("Failed to load channels: " + error.message);
+      } catch (err) {
+        alert("Failed to load channels.json: " + err.message);
       }
     }
 
-    document.getElementById("closePlayer").onclick = () => {
-      const player = document.getElementById("player");
-      const video = document.getElementById("videoPlayer");
-      video.pause();
-      video.src = "";
-      player.style.display = "none";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
+    function playStream(originalUrl) {
+  const proxyUrl = `https://proxyphp.free.nf/proxy.php?url=${encodeURIComponent(originalUrl)}`;
+  const video = document.getElementById("videoPlayer");
+  const loading = document.getElementById("loading");
+  const playerContainer = document.getElementById("player-container");
 
-    document.getElementById("fullscreenPlayer").onclick = () => {
-      const video = document.getElementById("videoPlayer");
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) {
-        video.webkitRequestFullscreen();
-      } else if (video.msRequestFullscreen) {
-        video.msRequestFullscreen();
-      }
-    };
+  playerContainer.style.display = "block";
+  loading.style.display = "block";
+  video.pause();
+  video.src = "";
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(proxyUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(console.error);
+      loading.style.display = "none";
+    });
+    hls.on(Hls.Events.ERROR, (e, data) => {
+      console.error("HLS.js error", data);
+      alert("Stream error: " + data.details);
+      loading.style.display = "none";
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = proxyUrl;
+    video.addEventListener('loadedmetadata', () => {
+      video.play();
+      loading.style.display = "none";
+    });
+  } else {
+    loading.style.display = "none";
+    alert("Your browser does not support HLS streaming.");
+  }
+
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
 
     loadChannels();
   </script>
