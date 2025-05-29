@@ -213,14 +213,24 @@
             loading.style.display = "block";
             player.style.display = "block";
 
+            // Use the Vercel proxy URL
+            const proxyBaseUrl = 'https://fancode-proxy-yourname.vercel.app'; // Replace with your Vercel proxy URL
+            let proxyUrl;
+            if (url.includes('dai.fancode.com')) {
+              const streamPath = url.replace('https://dai.fancode.com/', '');
+              proxyUrl = `${proxyBaseUrl}/stream/fancode/${streamPath}`;
+            } else if (url.includes('sonypartnersdaimenew.akamaized.net')) {
+              const streamPath = url.split('/hls')[1];
+              proxyUrl = `${proxyBaseUrl}/stream/sony/hls${streamPath}`;
+            } else {
+              alert("Unsupported stream URL.");
+              loading.style.display = "none";
+              return;
+            }
+
             if (Hls.isSupported()) {
-              const hls = new Hls({
-                xhrSetup: (xhr, url) => {
-                  // Add headers if required
-                  // xhr.setRequestHeader('Authorization', 'Bearer YOUR_TOKEN');
-                }
-              });
-              hls.loadSource(url);
+              const hls = new Hls();
+              hls.loadSource(proxyUrl);
               hls.attachMedia(video);
               hls.on(Hls.Events.MANIFEST_PARSED, () => {
                 video.play().catch(err => {
@@ -233,15 +243,15 @@
                 loading.style.display = "none";
                 let errorMessage = "Error loading stream: " + data.type;
                 if (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR) {
-                  errorMessage += " (CORS or invalid URL?)";
+                  errorMessage = "Unable to load stream: Check the proxy URL or stream availability.";
                 } else if (data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR) {
-                  errorMessage += " (Invalid M3U8 format)";
+                  errorMessage = "Invalid stream format (M3U8 parsing error).";
                 }
                 alert(errorMessage);
                 console.error("HLS Error:", data);
               });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              video.src = url;
+              video.src = proxyUrl;
               video.play().then(() => {
                 loading.style.display = "none";
               }).catch(err => {
