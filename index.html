@@ -148,7 +148,7 @@
     }
 
     function playStream(originalUrl) {
-  const proxyUrl = `https://proxyphp.free.nf/proxy.php?url=${encodeURIComponent(originalUrl)}`;
+  const proxyUrl = originalUrl; // Bypass proxy for testing
   const video = document.getElementById("videoPlayer");
   const loading = document.getElementById("loading");
   const playerContainer = document.getElementById("player-container");
