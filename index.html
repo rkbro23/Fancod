@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FanCod LIVE Channels</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -10,6 +12,8 @@
       color: #fff;
       margin: 0;
       padding: 20px;
+      width: 100%;
+      overflow-x: hidden;
     }
 
     h1 {
@@ -21,14 +25,15 @@
 
     .channel-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      padding: 0 10px;
     }
 
     .channel-card {
       background: #161616;
       border-radius: 12px;
-      padding: 14px;
+      padding: 10px;
       position: relative;
       transition: 0.3s ease;
       cursor: pointer;
@@ -43,7 +48,7 @@
 
     .channel-logo {
       width: 100%;
-      height: 160px;
+      height: 120px;
       border-radius: 10px;
       object-fit: cover;
       background: #000;
@@ -85,63 +90,200 @@
       display: none;
     }
 
+    #player-container {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
     video {
       width: 100%;
-      max-width: 960px;
-      height: 500px;
+      height: auto;
+      max-height: 70vh;
       margin: 0 auto;
       display: block;
       background: #000;
       border-radius: 16px;
     }
+
+    #loading {
+      display: none;
+      text-align: center;
+      color: #00ff8c;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    #loading::before {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00ff8c;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #player-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    #player-controls button {
+      background: #ff0033;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .channel-card {
+        padding: 8px;
+      }
+      .channel-logo {
+        height: 100px;
+      }
+      .channel-title {
+        font-size: 0.9rem;
+      }
+      video {
+        max-height: 50vh;
+      }
+    }
   </style>
 </head>
 <body>
-
   <h1>🔴 FanCod LIVE Channels</h1>
   <div class="channel-list" id="channelList"></div>
 
   <div id="player">
-    <video id="videoPlayer" controls autoplay>
-      <source src="" type="application/x-mpegURL">
-      Your browser does not support M3U8 playback.
-    </video>
+    <div id="player-container">
+      <div id="player-controls">
+        <button id="closePlayer">Close</button>
+        <button id="fullscreenPlayer">Full Screen</button>
+      </div>
+      <div id="loading">Loading...</div>
+      <video id="videoPlayer" controls autoplay>
+        <source src="" type="application/x-mpegURL">
+        Your browser does not support M3U8 playback.
+      </video>
+    </div>
   </div>
 
   <script>
     async function loadChannels() {
-      const res = await fetch('channels.json');
-      const channels = await res.json();
-      const container = document.getElementById('channelList');
+      try {
+        const res = await fetch('channels.json');
+        if (!res.ok) throw new Error(`Failed to load channels.json: ${res.status}`);
+        const channels = await res.json();
+        const container = document.getElementById('channelList');
 
-      channels.forEach(channel => {
-        const card = document.createElement('div');
-        card.className = 'channel-card';
+        channels.forEach(channel => {
+          const card = document.createElement('div');
+          card.className = 'channel-card';
 
-        const logo = channel.attributes?.['tvg-logo'] || '';
-        const name = channel.name || 'Unknown Match';
-        const url = channel.url;
+          const logo = channel.attributes?.['tvg-logo'] || '';
+          const name = channel.name || 'Unknown Match';
+          const url = channel.url;
 
-        card.innerHTML = `
-          <div class="live-badge">LIVE</div>
-          <img src="${logo}" alt="${name}" class="channel-logo" onerror="this.src='https://via.placeholder.com/320x160/000000/ffffff?text=No+Image';">
-          <div class="channel-title">${name}</div>
-        `;
+          card.innerHTML = `
+            <div class="live-badge">LIVE</div>
+            <img src="${logo}" alt="${name}" class="channel-logo" onerror="this.src='https://via.placeholder.com/320x160/000000/ffffff?text=No+Image';">
+            <div class="channel-title">${name}</div>
+          `;
 
-        card.onclick = () => {
-          const player = document.getElementById("player");
-          const video = document.getElementById("videoPlayer");
-          video.src = url;
-          player.style.display = "block";
-          window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-        };
+          card.onclick = () => {
+            const player = document.getElementById("player");
+            const video = document.getElementById("videoPlayer");
+            const loading = document.getElementById("loading");
 
-        container.appendChild(card);
-      });
+            loading.style.display = "block";
+            player.style.display = "block";
+
+            if (Hls.isSupported()) {
+              const hls = new Hls({
+                xhrSetup: (xhr, url) => {
+                  // Add headers if required
+                  // xhr.setRequestHeader('Authorization', 'Bearer YOUR_TOKEN');
+                }
+              });
+              hls.loadSource(url);
+              hls.attachMedia(video);
+              hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch(err => {
+                  loading.style.display = "none";
+                  alert("Playback failed: " + err.message);
+                });
+                loading.style.display = "none";
+              });
+              hls.on(Hls.Events.ERROR, (event, data) => {
+                loading.style.display = "none";
+                let errorMessage = "Error loading stream: " + data.type;
+                if (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR) {
+                  errorMessage += " (CORS or invalid URL?)";
+                } else if (data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR) {
+                  errorMessage += " (Invalid M3U8 format)";
+                }
+                alert(errorMessage);
+                console.error("HLS Error:", data);
+              });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              video.src = url;
+              video.play().then(() => {
+                loading.style.display = "none";
+              }).catch(err => {
+                loading.style.display = "none";
+                alert("Playback failed: " + err.message);
+              });
+            } else {
+              loading.style.display = "none";
+              alert("Your browser does not support HLS playback.");
+            }
+
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+          };
+
+          container.appendChild(card);
+        });
+      } catch (error) {
+        alert("Failed to load channels: " + error.message);
+      }
     }
+
+    document.getElementById("closePlayer").onclick = () => {
+      const player = document.getElementById("player");
+      const video = document.getElementById("videoPlayer");
+      video.pause();
+      video.src = "";
+      player.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    document.getElementById("fullscreenPlayer").onclick = () => {
+      const video = document.getElementById("videoPlayer");
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+    };
 
     loadChannels();
   </script>
-
 </body>
 </html>
