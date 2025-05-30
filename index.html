@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FanCode Live - Stream Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Video.js CSS -->
+  <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #00ff8c;
+      --error-color: #ff0033;
+      --bg-dark: #0f0f0f;
+      --card-bg: #1a1a1a;
+    }
+    
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-dark);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+    }
+
+    .channel-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .channel-card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .channel-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 255, 140, 0.3);
+    }
+
+    .channel-logo {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: linear-gradient(45deg, #1e1e1e, #2a2a2a);
+    }
+
+    .channel-title {
+      font-weight: 600;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 5px;
+    }
+
+    .live-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--error-color);
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 8px;
+      animation: pulse 1.5s infinite;
+      z-index: 2;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 0, 51, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0); }
+    }
+
+    #player-container {
+      margin: 40px auto;
+      max-width: 960px;
+      display: none;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    #video-wrapper {
+      position: relative;
+      padding-top: 56.25%; /* 16:9 aspect ratio */
+    }
+
+    .video-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #player-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      display: none;
+    }
+
+    #error-message {
+      color: var(--error-color);
+      text-align: center;
+      margin: 20px 0;
+      display: none;
+    }
+
+    .btn {
+      background: var(--primary-color);
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Popup Styles */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .popup-content {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .popup-content h2 {
+      margin: 0 0 15px;
+      color: var(--primary-color);
+    }
+
+    .popup-content p {
+      margin: 0 0 20px;
+      color: #ccc;
+    }
+
+    .popup-buttons button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .popup-buttons button:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-ok {
+      background: var(--primary-color);
+      color: #000;
+    }
+
+    .btn-cancel {
+      background: var(--error-color);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .channel-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      
+      .channel-logo {
+        height: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .channel-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Popup -->
+  <div class="popup" id="welcomePopup">
+    <div class="popup-content">
+      <h2>Welcome to FanCode Live!</h2>
+      <p>Join my Telegram channel for more awesome content!</p>
+      <div class="popup-buttons">
+        <button class="btn-ok" onclick="joinChannel()">OK</button>
+        <button class="btn-cancel" onclick="closePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <h1>🔴 FanCode LIVE Streams</h1>
+  
+  <div id="error-message"></div>
+  
+  <div class="channel-list" id="channelList">
+    <div class="channel-card skeleton">
+      <div class="channel-logo"></div>
+      <div class="channel-title">Loading channels...</div>
+    </div>
+  </div>
+
+  <div id="player-container">
+    <div id="video-wrapper">
+      <div id="loading">Loading stream...</div>
+      <video
+        id="videoPlayer"
+        class="video-js vjs-default-skin"
+        controls
+        preload="auto"
+        data-setup='{"fluid": true}'
+      ></video>
+    </div>
+    <div id="player-controls">
+      <button class="btn" id="close-btn">Close Player</button>
+      <span id="now-playing"></span>
+    </div>
+  </div>
+
+  <!-- Video.js Script -->
+  <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+  <script>
+    // Global player instance
+    let player = null;
+    let currentStream = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadChannels();
+      document.getElementById('close-btn').addEventListener('click', closePlayer);
+      // Initialize Video.js
+      player = videojs('videoPlayer', {
+        fluid: true,
+        responsive: true,
+        playbackRates: [0.5, 1, 1.5, 2],
+        html5: {
+          hls: {
+            overrideNative: true,
+            withCredentials: false
+          }
+        }
+      });
+      // Show popup on page load
+      document.getElementById('welcomePopup').style.display = 'flex';
+    });
+
+    // Popup functions
+    function joinChannel() {
+      window.location.href = 'https://t.me/IPTVM3Y';
+    }
+
+    function closePopup() {
+      document.getElementById('welcomePopup').style.display = 'none';
+    }
+
+    async function loadChannels() {
+      try {
+        // Simulate channels data since channels.json is not provided
+        const data = [
+          {
+            name: "Test Stream",
+            url: "https://bcovlive-a.akamaihd.net/b238876e5f004ec29d4e07066a044996/eu-west-1/4854911276001/profile_0/chunklist.m3u8",
+            attributes: { "tvg-logo": "https://via.placeholder.com/300x160/1a1a1a/ffffff?text=Test+Stream" }
+          }
+        ];
+        const container = document.getElementById("channelList");
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+          showError("No channels available in the playlist");
+          return;
+        }
+
+        data.forEach(channel => {
+          const card = document.createElement("div");
+          card.className = "channel-card";
+
+          const logo = channel.attributes?.["tvg-logo"] || "";
+          const name = channel.name || "Untitled Stream";
+          const streamUrl = channel.url;
+
+          card.innerHTML = `
+            <div class="live-badge">LIVE</div>
+            <img src="${logo}" alt="${name}" class="channel-logo"
+              onerror="this.src='https://via.placeholder.com/300x160/1a1a1a/ffffff?text=No+Logo'">
+            <div class="channel-title">${name}</div>
+          `;
+
+          card.addEventListener('click', () => playStream(streamUrl, name));
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Failed to load channels:", err);
+        showError("Failed to load channels. Please try again later.");
+      }
+    }
+
+    function playStream(url, title) {
+      if (currentStream === url) return;
+      
+      const playerContainer = document.getElementById("player-container");
+      const loading = document.getElementById("loading");
+      const nowPlaying = document.getElementById("now-playing");
+      const errorMsg = document.getElementById("error-message");
+
+      // Reset state
+      errorMsg.style.display = 'none';
+      playerContainer.style.display = "block";
+      loading.style.display = "block";
+      nowPlaying.textContent = title || 'Live Stream';
+      
+      // Clean up previous stream
+      if (player) {
+        player.pause();
+        player.src();
+      }
+      
+      currentStream = url;
+
+      // Scroll to player
+      playerContainer.scrollIntoView({ behavior: 'smooth' });
+
+      // Set Video.js source
+      player.src({
+        src: url,
+        type: 'application/x-mpegURL'
+      });
+
+      player.ready(() => {
+        player.play().catch(e => {
+          console.error("Auto-play failed:", e);
+          loading.style.display = "none";
+          showError("Stream playback failed. Please try again.");
+        });
+      });
+
+      player.on('loadedmetadata', () => {
+        loading.style.display = "none";
+      });
+
+      player.on('error', () => {
+        loading.style.display = "none";
+        showError("Cannot play stream. It may be unavailable.");
+      });
+    }
+
+    function closePlayer() {
+      const playerContainer = document.getElementById("player-container");
+      
+      if (player) {
+        player.pause();
+        player.src();
+      }
+      
+      playerContainer.style.display = "none";
+      currentStream = null;
+    }
+
+    function showError(message) {
+      const errorMsg = document.getElementById("error-message");
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+      setTimeout(() => {
+        errorMsg.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
