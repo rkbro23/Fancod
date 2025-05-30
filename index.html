@@ -320,14 +320,10 @@
 
     async function loadChannels() {
       try {
-        // Simulate channels data since channels.json is not provided
-        const data = [
-          {
-            name: "Test Stream",
-            url: "https://bcovlive-a.akamaihd.net/b238876e5f004ec29d4e07066a044996/eu-west-1/4854911276001/profile_0/chunklist.m3u8",
-            attributes: { "tvg-logo": "https://via.placeholder.com/300x160/1a1a1a/ffffff?text=Test+Stream" }
-          }
-        ];
+        const res = await fetch("channels.json");
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        
+        const data = await res.json();
         const container = document.getElementById("channelList");
         container.innerHTML = '';
 
