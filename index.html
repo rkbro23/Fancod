@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎥 M3U8 Player</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/hls-video-element/+esm"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/player.style/yt/+esm"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a1d, #0f2027);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin: 20px 0;
+      font-size: 2rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #00ffe7, #1db954);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 800px;
+      flex-wrap: wrap;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid #1db954;
+      background-color: #101010;
+      color: #00ffe7;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #00ffe7;
+      box-shadow: 0 0 10px #1db95488;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #1db954;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #00ffe7;
+      color: black;
+      transform: scale(1.05);
+    }
+
+    media-theme-yt {
+      width: 90%;
+      max-width: 1000px;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 255, 231, 0.4);
+      animation: zoomIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      input, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔥 Live M3U8 Stream Player</h1>
+
+  <div class="input-container">
+    <input type="text" id="urlInput" placeholder="Enter .m3u8 URL here..." />
+    <button onclick="loadStream()">▶ Load</button>
+  </div>
+
+  <media-theme-yt>
+    <hls-video
+      slot="media"
+      id="hlsPlayer"
+      src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+      playsinline
+      controls
+      crossorigin="anonymous"
+      autoplay
+    ></hls-video>
+  </media-theme-yt>
+
+  <footer>Built with ❤️ by M3U8 PlayX</footer>
+
+  <script>
+    function loadStream() {
+      const input = document.getElementById('urlInput');
+      const player = document.getElementById('hlsPlayer');
+      const url = input.value.trim();
+
+      if (url.endsWith(".m3u8")) {
+        player.src = url;
+        player.play();
+      } else {
+        alert("❌ Please enter a valid .m3u8 stream URL.");
+      }
+    }
+  </script>
+
+</body>
+</html>
