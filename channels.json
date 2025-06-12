@@ -1,0 +1,143 @@
+{
+    "Author": "IPTVM3Y",
+    "Telegram_channel": "https://t.me/IPTVM3Y",
+    "name": "FanCode Live Matches API",
+    "last_updated": "03:35:14 PM 12-06-2025",
+    "headers": {
+        "User-Agent": "ReactNativeVideo/7.19.1 (Linux;Android/13) AndroidXMedia3/1.1.1",
+        "Referer": "https://fancode.com/"
+    },
+    "total_live_matches": 13,
+    "matches": [
+        {
+            "category": "Cricket",
+            "match_id": 128051,
+            "title": "Rashmi Medinipur Wizards Vs Lux Shyam Kolkata Tigers",
+            "tournament": "Bengal Pro T20 league, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128051_5282_RMW_LSKT_fc-App.jpg",
+            "india": "https://dai.fancode.com/primary/128051_english_hls_58784adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128051_english_hls_58784adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128051,
+            "title": "Rashmi Medinipur Wizards Vs Lux Shyam Kolkata Tigers",
+            "tournament": "Bengal Pro T20 league, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128051_5282_RMW_LSKT_fc-App.jpg",
+            "india": "https://dai.fancode.com/primary/128051_hindi_hls_68576adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128051_hindi_hls_68576adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128051,
+            "title": "Rashmi Medinipur Wizards Vs Lux Shyam Kolkata Tigers",
+            "tournament": "Bengal Pro T20 league, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128051_5282_RMW_LSKT_fc-App.jpg",
+            "india": "https://dai.fancode.com/primary/128051_bengali_hls_24640adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128051_bengali_hls_24640adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128174,
+            "title": "Orange Tigers Vs Pagariya Strikers",
+            "tournament": "Vidarbha Pro T20 League, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128174_5285_ORT_PAS_fc-App.jpg",
+            "india": "https://dai.fancode.com/primary/128174_english_hls_45917adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128174_english_hls_45917adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128191,
+            "title": "Zalawad Strikers Vs Anmol Kings Halar",
+            "tournament": "Saurashtra Pro T20 League, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128191_5287_ZR_HH_fc-App.jpg",
+            "india": "https://dai.fancode.com/primary/128191_english_hls_6351adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128191_english_hls_6351adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127243,
+            "title": "Scotland Vs Netherlands",
+            "tournament": "ICC CWC League 2, 2023-27",
+            "status": "STARTED",
+            "image": "https://images.fancode.com/aig/match/v1/127243_CASACARDS_SPORTY_APP.png",
+            "india": "https://dai.fancode.com/primary/127243_english_hls_48529adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127243_english_hls_48529adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127356,
+            "title": "Tanzania Women Vs Cameroon Women",
+            "tournament": "Kwibuka Women's T20I Tournament, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/127356_5244_TANW_CAM-W_FC-Web.jpg",
+            "india": "https://dai.fancode.com/primary/127356_english_hls_15892adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127356_english_hls_15892adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127357,
+            "title": "Uganda Women Vs Rwanda Women",
+            "tournament": "Kwibuka Women's T20I Tournament, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/127357_5244_UG-W_RWA-W_FC-Web.jpg",
+            "india": "https://dai.fancode.com/primary/127357_english_hls_45872adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127357_english_hls_45872adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128082,
+            "title": "Lux Shyam Kolkata Tigers Womens Vs Servotech Siliguri Strikers Womens",
+            "tournament": "Bengal Women's Pro T20 League, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/128082_5283_LSKT-W_SSS-W_fc-Web.jpg",
+            "india": "https://dai.fancode.com/primary/128082_english_hls_6847adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128082_english_hls_6847adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 128774,
+            "title": "Gibraltar Women Vs Austria Women",
+            "tournament": "ECN Central Europe Cup T20IW, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/ECN-Central-Europe-cup-T20iW-old.png",
+            "india": "https://dai.fancode.com/primary/128774_english_hls_94417adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/128774_english_hls_94417adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127733,
+            "title": "East Londoners Vs Sharks Cricket Academy",
+            "tournament": "ECS England, Hornchurch, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/ECS-England,-Hornchurch,-2025-old-Match-card-2_1748596967146.jpg",
+            "india": "https://dai.fancode.com/primary/127733_english_hls_3332adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127733_english_hls_3332adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127659,
+            "title": "Hyderabad Boys Vs Jharkhand Super Giants",
+            "tournament": "Dreams Bigg T20 Championship, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/dreams-bigg-t20-championship-old-match-card.jpg",
+            "india": "https://dai.fancode.com/primary/127659_english_hls_28525adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127659_english_hls_28525adfreeta-di_h264/index.m3u8"
+        },
+        {
+            "category": "Cricket",
+            "match_id": 127780,
+            "title": "Heritage City Titans Vs Narmada Navigators",
+            "tournament": "Cricket Premier League, 2025",
+            "status": "STARTED",
+            "image": "https://www.fancode.com/skillup-uploads/cms-media/127772_5267_HCT_NNV_fc-web.jpg",
+            "india": "https://dai.fancode.com/primary/127780_english_hls_74309adfreeta-di_h264/index.m3u8",
+            "worldwide": "https://allinonereborn.com/fc/stream_proxy.php?url=https://dai.fancode.com/primary/127780_english_hls_74309adfreeta-di_h264/index.m3u8"
+        }
+    ]
+}
