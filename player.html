@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FANCOD Player - RK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff6b00;
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --dark-text: #e0e0e0;
+            --light-bg: #f5f5f5;
+            --light-card: #ffffff;
+            --light-text: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        body[data-theme="light"] {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+        
+        header {
+            background-color: var(--primary);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .player-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background-color: #000;
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .stream-info {
+            background-color: var(--dark-card);
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        body[data-theme="light"] .stream-info {
+            background-color: var(--light-card);
+        }
+        
+        .stream-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .stream-type {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #ff5252;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        footer {
+            background-color: var(--dark-card);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        body[data-theme="light"] footer {
+            background-color: var(--light-card);
+        }
+        
+        .disclaimer {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .copyright {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Telegram Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background-color: var(--dark-card);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        body[data-theme="light"] .popup-content {
+            background-color: var(--light-card);
+        }
+        
+        .popup-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .popup-message {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .popup-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        
+        .popup-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .popup-btn-join {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .popup-btn-close {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .stream-title {
+                font-size: 1.3rem;
+            }
+            
+            .popup-content {
+                padding: 1.5rem;
+            }
+            
+            .popup-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">FANCOD WEB BY RK</a>
+            <div class="controls">
+                <button class="back-btn" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="theme-toggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="player-container" id="playerContainer">
+            <div class="loading-screen">
+                <div class="loading-spinner"></div>
+                <h2>Loading Stream...</h2>
+            </div>
+        </div>
+        
+        <div class="stream-info" id="streamInfo">
+            <!-- Stream info will be inserted here by JavaScript -->
+        </div>
+    </main>
+    
+    <footer>
+        <div class="disclaimer">
+            Disclaimer: This website is for educational purposes only. We do not host any streams. All streams are fetched from external sources.
+        </div>
+        <div class="copyright">
+            &copy; 2025 FANCOD WEB BY RK. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Telegram Popup -->
+    <div class="popup-overlay" id="telegramPopup">
+        <div class="popup-content">
+            <h2 class="popup-title">Join Our Telegram Channel</h2>
+            <p class="popup-message">
+                For more live matches, updates, and premium content, join our official Telegram channel!
+            </p>
+            <div class="popup-buttons">
+                <button class="popup-btn popup-btn-join" id="joinTelegramBtn">
+                    <i class="fab fa-telegram"></i> Join Now
+                </button>
+                <button class="popup-btn popup-btn-close" id="closePopupBtn">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('.theme-toggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        // Telegram Popup functionality
+        const telegramPopup = document.getElementById('telegramPopup');
+        const joinTelegramBtn = document.getElementById('joinTelegramBtn');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        
+        // Show popup after 10 seconds
+        setTimeout(() => {
+            if (!sessionStorage.getItem('popupShown')) {
+                telegramPopup.classList.add('active');
+                sessionStorage.setItem('popupShown', 'true');
+            }
+        }, 10000);
+        
+        // Close popup when close button is clicked
+        closePopupBtn.addEventListener('click', () => {
+            telegramPopup.classList.remove('active');
+        });
+        
+        // Open Telegram channel when join button is clicked
+        joinTelegramBtn.addEventListener('click', () => {
+            window.open('https://t.me/IPTVM3Y', '_blank');
+            telegramPopup.classList.remove('active');
+        });
+        
+        // Load the stream
+        document.addEventListener('DOMContentLoaded', () => {
+            const playerContainer = document.getElementById('playerContainer');
+            const streamInfo = document.getElementById('streamInfo');
+            
+            // Get stream data from localStorage
+            const streamData = JSON.parse(localStorage.getItem('currentStream'));
+            
+            if (!streamData || !streamData.url) {
+                playerContainer.innerHTML = `
+                    <div class="error-message">
+                        <h2>Stream Not Available</h2>
+                        <p>No stream URL found. Please go back and select a stream.</p>
+                        <button class="back-btn" onclick="window.location.href='index.html'" style="margin-top: 1rem;">
+                            <i class="fas fa-arrow-left"></i> Back to Matches
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Create player
+            setTimeout(() => {
+                playerContainer.innerHTML = `
+                    <div class="video-wrapper">
+                        <iframe src="${generatePlayerUrl(streamData.url)}" allowfullscreen></iframe>
+                    </div>
+                `;
+                
+                // Show stream info (SIMPLIFIED - only title and type)
+                streamInfo.innerHTML = `
+                    <h2 class="stream-title">${streamData.title}</h2>
+                    <div class="stream-type">${streamData.type}</div>
+                `;
+            }, 1500);
+        });
+        
+        // Function to generate player URL using Anym3u8 Player
+        function generatePlayerUrl(streamUrl) {
+            // Check if it's already an Anym3u8 URL
+            if (streamUrl.includes('anym3u8player.com')) {
+                return streamUrl;
+            }
+            
+            // If it's a direct m3u8 URL, wrap it in Anym3u8 player
+            if (streamUrl.includes('.m3u8')) {
+                return `https://anym3u8player.com/ultimate-player-generator/player.php?player=jwplayer&url=${encodeURIComponent(streamUrl)}`;
+            }
+            
+            // Fallback to original URL if not m3u8
+            return streamUrl;
+        }
+    </script>
+</body>
+</html>
